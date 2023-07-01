@@ -12,6 +12,7 @@ const helmet = require('helmet');
 // IMPORT ROUTERS
 const authRouter = require('./routes/authRoutes');
 const userRouter = require('./routes/userRoutes');
+const companyRouter = require('./routes/companyRoutes');
 const router = require('./routes/routes');
 const AppError = require('./utils/appError');
 const errorController = require('./controllers/errorController');
@@ -63,6 +64,7 @@ app.use(compression());
 // USE ROUTERS
 app.use('/api/v1/auth/', authRouter); // <- Calling the auth router
 app.use('/api/v1/user/', userRouter); // <- Calling the user router
+app.use('/api/v1/company', companyRouter);
 app.use('/api/v1/', router); // <- Calling the router
 
 app.all('*', (req, res, next) => {	// <- Middleware to handle Non-existing Routes

@@ -45,6 +45,15 @@ const userSchema = new mongoose.Schema(
             default: 'user',
             enum: ['user', 'admin'],
         },
+        company: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Company',
+            role: {
+                type: String,
+                enum: ['user', 'admin'],
+                default: 'user'
+            }
+        }
     },
     {
         toJSON: { virtuals: true },
