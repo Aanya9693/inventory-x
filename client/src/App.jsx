@@ -1,35 +1,100 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from "react";
+import "./App.css";
+import Dashboard from "./screens/Dashboard";
+import Auth from "./screens/Auth";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { getCompany, getUserData } from "./services/api";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import Navbar from "./components/Navbar/Navbar";
+import MenuBar from "./components/MenuBar";
 
 function App() {
-  const [count, setCount] = useState(0)
+	const [user, setUser] = useState(
+		JSON.parse(localStorage.getItem("user")) || null
+	);
+	const [company, setCompany] = useState(
+		JSON.parse(localStorage.getItem("company")) || null
+	);
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+	const login = (userData) => {
+		setUser(userData);
+		localStorage.setItem("user", JSON.stringify(userData));
+	};
+	const logout = () => {
+		setUser(null);
+		localStorage.setItem("user", JSON.stringify(null));
+	};
+
+	useEffect(() => {
+		const refreshUserData = async () => {
+			try {
+				const res = await getUserData();
+
+				login(res.data.data.user);
+			} catch (err) {
+				// alert({ message: err.response.data.message, type: "error" });
+			}
+		};
+		
+		refreshUserData();
+
+	}, []);
+
+	useEffect(() => {
+		const refreshCompany = async () => {
+			try {
+				const res = await getCompany(user.company);
+				setCompany(res.data.data.company);
+			} catch (err) {
+				alert(err.response.data.message);
+			}
+		};
+		if (user && user.company) {
+			refreshCompany();
+		}
+	}, [user]);
+
+	return (
+		<GoogleOAuthProvider clientId="79486214026-37n8n96tjtv0h9o6a8dnabi857555n02.apps.googleusercontent.com">
+			<div className="app">
+				<Router>
+					<Navbar user={user} login={login} logout={logout}></Navbar>
+					<MenuBar
+						user={user}
+						login={login}
+						logout={logout}
+					></MenuBar>
+					<Routes>
+						<Route
+							exact
+							path="/"
+							element={
+								<Dashboard
+									user={user}
+									company={company}
+									login={login}
+									logout={logout}
+									setCompany={setCompany}
+								></Dashboard>
+							}
+						></Route>
+						<Route
+							exact
+							path="/auth"
+							element={
+								<Auth
+									user={user}
+									login={login}
+									logout={logout}
+									setCompany={(val) => setCompany(val)}
+								></Auth>
+							}
+						></Route>
+					</Routes>
+				</Router>
+			</div>
+		</GoogleOAuthProvider>
+	);
 }
 
-export default App
+export default App;

@@ -8,6 +8,7 @@ const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const dotenv = require('dotenv');
 const helmet = require('helmet');
+const cookieParser = require('cookie-parser');
 
 // IMPORT ROUTERS
 const authRouter = require('./routes/authRoutes');
@@ -39,6 +40,7 @@ const limiter = rateLimit({	// <- Limits the number of api calls that can be mad
 });
 
 app.use('/api/v1', limiter);
+app.use(cookieParser());
 
 app.use((req, res, next) => {	// <- Serves req time and cookies
 	

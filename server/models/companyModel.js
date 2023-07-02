@@ -33,10 +33,10 @@ const companyModel = new mongoose.Schema(
 	}
 );
 
-companyModel.pre('save', function (next) {
-	if (!this.pin) {
-		this.pin = Math.random() * 100000;
-	}
+companyModel.pre('save', function (next) { 
+	
+	if (!this.pin) this.pin = Math.round((Math.random() * 100000))
+
 	next();
 });
 

@@ -21,9 +21,7 @@ exports.getAllCompanies = catchAsync(async (req, res, next) => {
 });
 
 exports.getCompany = catchAsync(async (req, res, next) => {
-	const company = await Company.findById(req.params.id, req.body, {
-		new: true
-	});
+	const company = await Company.findById(req.params.id);
 
 	if (!company) return next(new AppError('No such company found with id: ', + req.params.id, 404));
 
@@ -37,16 +35,29 @@ exports.getCompany = catchAsync(async (req, res, next) => {
 
 exports.newCompany = catchAsync(async (req, res, next) => {
 
-	const { name, owner } = req.body;
+	const { name } = req.body;
+	const { user } = req;
+
+	const owner = await User.findById(user.id);
+	if (owner.company) return next(new AppError('You already have a company', 401));
+
 	const company = await Company.create({
 		name,
-		owner
+		owner: user.id
+	});
+
+	const newUser = await User.findByIdAndUpdate(user.id, {
+		company: company.id
+	}, {
+		runValidators: true,
+		new: true
 	});
 
 	res.status(200).json({
 		message: 'status',
 		data: {
-			company
+			company,
+			user: newUser
 		}
 	});
 });

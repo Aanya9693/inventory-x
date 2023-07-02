@@ -10,6 +10,12 @@ Router.route('/all').get(
     userController.getAllUsers
 );
 
+Router.route('/')
+    .get(authController.protect, userController.getMe)
+    .patch(authController.protect, userController.updateMe)
+    .delete(authController.protect, userController.deleteMe);
+
+
 Router.route('/:id')
     .get(
         authController.protect,
@@ -27,10 +33,5 @@ Router.route('/:id')
         userController.deleteUser
     );
 
-Router.route('/')
-    .get(authController.protect, userController.getMe)
-    .patch(authController.protect, userController.updateMe)
-	.delete(authController.protect, userController.deleteMe);
-	
 
 module.exports = Router;

@@ -4,17 +4,21 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"dev": "vite",
+		"dev": "vite --port 3000 --strictPort --host && nodemon",
 		"build": "vite build",
 		"lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
 		"preview": "vite preview"
 	},
 	"dependencies": {
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0",
 		"@emotion/react": "^11.9.0",
 		"@emotion/styled": "^11.8.1",
-		"@mui/material": "^5.8.1"
+		"@mui/material": "^5.8.1",
+		"@react-oauth/google": "^0.2.6",
+		"axios": "^1.4.0",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"react-qr-barcode-scanner": "^1.0.6",
+		"react-router-dom": "^6.3.0"
 	},
 	"devDependencies": {
 		"@types/react": "^18.0.37",
